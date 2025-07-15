@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPCC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            font-weight: 300;
+            opacity: 0.85;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .setup-screen {
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        .input-section label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 1.05rem;
+        }
+        
+        .word-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #dce1e6;
+            border-radius: 8px;
+            background: white;
+            color: #333;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .word-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+        }
+        
+        .instructions {
+            background: #f0f7ff;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 30px 0;
+            font-size: 0.95rem;
+            color: #2c3e50;
+        }
+        
+        .instructions p {
+            margin-bottom: 8px;
+        }
+        
+        .instructions strong {
+            color: #2c3e50;
+        }
+        
+        .btn-container {
+            text-align: center;
+            margin-top: 25px;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.25);
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .game-screen {
+            display: none;
+            padding: 20px;
+        }
+        
+        .players-container {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .player-board {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e1e6eb;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+        
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #edf2f7;
+        }
+        
+        .player-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .player-title.player1 {
+            color: #3498db;
+        }
+        
+        .player-title.player2 {
+            color: #e74c3c;
+        }
+        
+        .word-counter {
+            background: #edf2f7;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            color: #4a5568;
+            font-weight: 500;
+        }
+        
+        .chain-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .chain-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .chain-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+            border-color: #cbd5e0;
+        }
+        
+        .word-display {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            min-height: 50px;
+        }
+        
+        .letter-box {
+            width: 40px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3498db;
+            text-transform: uppercase;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .letter-box.revealed {
+            color: #27ae60;
+            animation: reveal 0.4s ease;
+        }
+        
+        .letter-box.hidden {
+            background: #edf2f7;
+            color: transparent;
+        }
+        
+        .letter-box.hidden::after {
+            content: "?";
+            position: absolute;
+            color: #a0aec0;
+            font-size: 1.2rem;
+        }
+        
+        .letter-box:first-child {
+            color: #e74c3c;
+            background: #fef2f2;
+            border-color: #fee2e2;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .ctrl-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background: white;
+            color: #4a5568;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+        }
+        
+        .ctrl-btn:hover {
+            background: #f1f5f9;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .ctrl-btn.reveal {
+            background: #fef2f2;
+            border-color: #fee2e2;
+            color: #e74c3c;
+        }
+        
+        .ctrl-btn.reveal:hover {
+            background: #fee2e2;
+        }
+        
+        .ctrl-btn.next {
+            background: #f0fdf4;
+            border-color: #dcfce7;
+            color: #27ae60;
+        }
+        
+        .ctrl-btn.next:hover {
+            background: #dcfce7;
+        }
+        
+        .reset-container {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        /* Animations */
+        @keyframes reveal {
+            0% { 
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.05);
+            }
+            100% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .players-container {
+                flex-direction: column;
+            }
+            
+            .setup-screen {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Chain link challenge- tutor edition</h1>
+            <p class="subtitle">Connect words in a chain - each word starts with the last letter of the previous word</p>
+        </header>
+
+       
+        <section class="setup-screen" id="setupScreen">
+            <div class="input-section">
+                <label for="player1-input">Player 1 words (separated by commas):</label>
+                <input 
+                    type="text" 
+                    id="player1-input" 
+                    class="word-input" 
+                    placeholder="Example: sun,flower,pot"
+                    value=""
+                >
+            </div>
+            
+            <div class="input-section">
+                <label for="player2-input">Player 2 words (separated by commas):</label>
+                <input 
+                    type="text" 
+                    id="player2-input" 
+                    class="word-input" 
+                    placeholder="Example: table,elephant,tiger"
+                    value=""
+                >
+            </div>
+            
+            <div class="instructions">
+                <p><strong>How to play:</strong></p>
+                <p>1. Enter a list of words for each player (at least 3 words each)</p>
+                <p>2. Click "Start Game" to begin</p>
+                <p>3. Each player gets their own set of words</p>
+                <p>4. Reveal letters one by one with "Next Letter" or show the whole word with "Reveal"</p>
+                <p>5. First player to guess all their words wins!</p>
+            </div>
+            
+            <div class="btn-container">
+                <button id="start-btn" class="btn">Start Game</button>
+            </div>
+        </section>
+
+        
+        <section class="game-screen" id="gameScreen">
+            <div class="players-container">
+               
+                <div class="player-board">
+                    <div class="player-header">
+                        <h3 class="player-title player1">Player 1</h3>
+                        <div class="word-counter">Words: <span id="player1-count">0</span></div>
+                    </div>
+                    <div id="player1-chains" class="chain-container">
+                       
+                    </div>
+                </div>
+
+             
+                <div class="player-board">
+                    <div class="player-header">
+                        <h3 class="player-title player2">Player 2</h3>
+                        <div class="word-counter">Words: <span id="player2-count">0</span></div>
+                    </div>
+                    <div id="player2-chains" class="chain-container">
+                     
+                    </div>
+                </div>
+            </div>
+            
+            <div class="reset-container">
+                <button id="reset-btn" class="btn">New Game</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+           
+            const player1Input = document.getElementById('player1-input');
+            const player2Input = document.getElementById('player2-input');
+            const startBtn = document.getElementById('start-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const setupScreen = document.querySelector('.setup-screen');
+            const gameScreen = document.querySelector('.game-screen');
+            const player1Chains = document.getElementById('player1-chains');
+            const player2Chains = document.getElementById('player2-chains');
+            const player1Count = document.getElementById('player1-count');
+            const player2Count = document.getElementById('player2-count');
+            
+          
+            let player1Words = [];
+            let player2Words = [];
+            
+           
+            startBtn.addEventListener('click', startGame);
+            resetBtn.addEventListener('click', resetGame);
+            
+          
+            function startGame() {
+                
+                const player1Input_value = player1Input.value.trim();
+                if (!player1Input_value) {
+                    alert("Please enter some words for Player 1!");
+                    return;
+                }
+                
+                player1Words = player1Input_value.split(',')
+                    .map(word => word.trim())
+                    .filter(word => word.length > 0);
+                
+                if (player1Words.length < 3) {
+                    alert("Please enter at least 3 words for Player 1!");
+                    return;
+                }
+                
+              
+                const player2Input_value = player2Input.value.trim();
+                if (!player2Input_value) {
+                    alert("Please enter some words for Player 2!");
+                    return;
+                }
+                
+                player2Words = player2Input_value.split(',')
+                    .map(word => word.trim())
+                    .filter(word => word.length > 0);
+                
+                if (player2Words.length < 3) {
+                    alert("Please enter at least 3 words for Player 2!");
+                    return;
+                }
+                
+               
+                
+               
+                player1Count.textContent = player1Words.length;
+                player2Count.textContent = player2Words.length;
+                
+              
+                generateWordChains(player1Words, player1Chains);
+                generateWordChains(player2Words, player2Chains);
+                
+              
+                setupScreen.style.display = 'none';
+                gameScreen.style.display = 'block';
+            }
+            
+          
+            function resetGame() {
+                gameScreen.style.display = 'none';
+                setupScreen.style.display = 'block';
+                player1Chains.innerHTML = '';
+                player2Chains.innerHTML = '';
+            }
+            
+           
+            function generateWordChains(words, container) {
+                container.innerHTML = '';
+                
+                words.forEach((word, wordIndex) => {
+                    const chainCard = document.createElement('div');
+                    chainCard.className = 'chain-card';
+                    
+                    const wordDisplay = document.createElement('div');
+                    wordDisplay.className = 'word-display';
+                    
+                   
+                    for (let i = 0; i < word.length; i++) {
+                        const letterBox = document.createElement('div');
+                        letterBox.className = 'letter-box';
+                        letterBox.textContent = word[i];
+                        
+                     
+                        if (wordIndex === 0) {
+                            letterBox.classList.add('revealed');
+                        } else if (i === 0) {
+                            letterBox.classList.add('revealed');
+                        } else {
+                            letterBox.classList.add('hidden');
+                        }
+                        
+                        wordDisplay.appendChild(letterBox);
+                    }
+                    
+                   
+                    const controls = document.createElement('div');
+                    controls.className = 'controls';
+                    
+                    const nextBtn = document.createElement('button');
+                    nextBtn.className = 'ctrl-btn next';
+                    nextBtn.textContent = 'Next Letter';
+                    
+                    const revealBtn = document.createElement('button');
+                    revealBtn.className = 'ctrl-btn reveal';
+                    revealBtn.textContent = 'Reveal';
+                    
+                    controls.appendChild(nextBtn);
+                    controls.appendChild(revealBtn);
+                    
+                 
+                    nextBtn.addEventListener('click', () => {
+                        revealNextLetter(wordDisplay);
+                    });
+                    
+                    revealBtn.addEventListener('click', () => {
+                        revealAllLetters(wordDisplay);
+                    });
+                    
+                  
+                    chainCard.appendChild(wordDisplay);
+                    chainCard.appendChild(controls);
+                    container.appendChild(chainCard);
+                });
+            }
+            
+         
+            function revealNextLetter(wordDisplay) {
+                const hiddenLetters = wordDisplay.querySelectorAll('.letter-box.hidden');
+                if (hiddenLetters.length > 0) {
+                    hiddenLetters[0].classList.remove('hidden');
+                    hiddenLetters[0].classList.add('revealed');
+                }
+            }
+            
+           
+            function revealAllLetters(wordDisplay) {
+                const hiddenLetters = wordDisplay.querySelectorAll('.letter-box.hidden');
+                hiddenLetters.forEach(letter => {
+                    letter.classList.remove('hidden');
+                    letter.classList.add('revealed');
+                });
+            }
+            
+            
+        });
+    </script>
+</body>
+</html>
